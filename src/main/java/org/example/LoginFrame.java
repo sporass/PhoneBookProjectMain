@@ -5,92 +5,71 @@ import java.awt.*;
 
 public class LoginFrame extends JFrame {
 
+    private JTextField userField;
+    private JPasswordField passField;
+    private JLabel errorLabel;
+
     public LoginFrame() {
-        Color primaryBlue = new Color(0, 102, 204);
-        Font baseFont = new Font("Segoe UI", Font.PLAIN, 14);
-
-        setTitle("Login");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(600, 400);
+        setTitle("📒 PhoneBook - Login");
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setSize(400, 250);
         setLocationRelativeTo(null);
+        setLayout(new GridBagLayout());
 
-        JPanel loginPanel = new JPanel(new GridBagLayout());
-        loginPanel.setBackground(Color.WHITE);
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 20, 10, 20);
-        gbc.fill = GridBagConstraints.NONE;
+        gbc.insets = new Insets(10, 15, 10, 15);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        JLabel titleLabel = new JLabel("Zaloguj się");
-        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
-        titleLabel.setForeground(primaryBlue);
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.gridwidth = 2;
-        loginPanel.add(titleLabel, gbc);
+        JLabel title = new JLabel("Logowanie do PhoneBook");
+        title.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        title.setHorizontalAlignment(SwingConstants.CENTER);
+        gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2;
+        add(title, gbc);
 
-        JLabel userLabel = new JLabel("Użytkownik:");
-        userLabel.setFont(baseFont);
-        gbc.gridy++;
+        // Użytkownik
         gbc.gridwidth = 1;
-        gbc.gridx = 0;
-        loginPanel.add(userLabel, gbc);
-
-        JTextField userField = new JTextField();
-        userField.setFont(baseFont);
-        gbc.gridx = 1;
-        userField.setPreferredSize(new Dimension(200, 30));
-        loginPanel.add(userField, gbc);
-
-        JLabel passLabel = new JLabel("Hasło:");
-        passLabel.setFont(baseFont);
-        gbc.gridx = 0;
         gbc.gridy++;
-        loginPanel.add(passLabel, gbc);
+        add(new JLabel("Użytkownik:"), gbc);
 
-        JPasswordField passField = new JPasswordField();
-        passField.setFont(baseFont);
+        userField = new JTextField();
         gbc.gridx = 1;
-        passField.setPreferredSize(new Dimension(200, 30));
-        loginPanel.add(passField, gbc);
+        add(userField, gbc);
 
+        // Hasło
+        gbc.gridx = 0; gbc.gridy++;
+        add(new JLabel("Hasło:"), gbc);
+
+        passField = new JPasswordField();
+        gbc.gridx = 1;
+        add(passField, gbc);
+
+        // Przycisk logowania
         JButton loginButton = new JButton("Zaloguj");
-        loginButton.setFont(baseFont);
-        loginButton.setForeground(Color.WHITE);
-        loginButton.setBackground(primaryBlue);
-        loginButton.setFocusPainted(false);
-        loginButton.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
-        gbc.gridx = 0;
-        gbc.gridy++;
-        gbc.gridwidth = 2;
-        loginPanel.add(loginButton, gbc);
+        gbc.gridx = 0; gbc.gridy++; gbc.gridwidth = 2;
+        add(loginButton, gbc);
 
-        JLabel errorLabel = new JLabel("");
-        errorLabel.setFont(baseFont);
+        // Etykieta błędu
+        errorLabel = new JLabel("");
         errorLabel.setForeground(Color.RED);
+        errorLabel.setHorizontalAlignment(SwingConstants.CENTER);
         gbc.gridy++;
-        loginPanel.add(errorLabel, gbc);
+        add(errorLabel, gbc);
 
-        add(loginPanel);
-        setVisible(true);
-
-        // --- logika logowania ---
-        loginButton.addActionListener(e -> {
-            String username = userField.getText().trim();
-            String password = new String(passField.getPassword()).trim();
-
-            boolean isAdmin = "Anna".equalsIgnoreCase(username) && "Kowalska".equals(password);
-            boolean isJan = "Jan".equalsIgnoreCase(username) && "Kowalski".equals(password);
-
-            if (isAdmin || isJan) {
-                dispose(); // zamyka okno logowania
-                new PhonebookFrame(isAdmin).setVisible(true); // otwiera aplikację
-            } else {
-                errorLabel.setText("Niepoprawny login lub hasło");
-            }
-        });
+        loginButton.addActionListener(e -> login());
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(LoginFrame::new);
+    private void login() {
+        String username = userField.getText().trim();
+        String password = new String(passField.getPassword()).trim();
+
+        boolean isAdmin = "Anna".equalsIgnoreCase(username) && "Kowalska".equals(password);
+        boolean isJan = "Jan".equalsIgnoreCase(username) && "Kowalski".equals(password);
+
+        if (isAdmin || isJan) {
+            dispose();
+            new PhonebookFrame(isAdmin).setVisible(true);
+        } else {
+            errorLabel.setText("Niepoprawny login lub hasło");
+        }
     }
 }

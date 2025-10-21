@@ -6,6 +6,7 @@ import javax.swing.table.TableRowSorter;
 import java.awt.*;
 
 public class PhonebookFrame extends JFrame {
+
     private final EmployeeTableModel tableModel;
     private final JTable table;
     private final JTextField searchField;
@@ -13,82 +14,76 @@ public class PhonebookFrame extends JFrame {
 
     public PhonebookFrame(boolean isAdmin) {
         this.isAdmin = isAdmin;
-        setTitle("Employee PhoneBook");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(800, 450);
+        setTitle("📒 PhoneBook");
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setSize(850, 480);
         setLocationRelativeTo(null);
-        setLayout(new BorderLayout());
 
-        // --- Top panel: Search ---
-        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
-        searchPanel.setBackground(new Color(173, 216, 230));
-        searchPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-        JLabel searchLabel = new JLabel("Search:");
-        searchField = new JTextField(20);
-        searchPanel.add(searchLabel);
-        searchPanel.add(searchField);
-        add(searchPanel, BorderLayout.NORTH);
+        JPanel mainPanel = new JPanel(new BorderLayout(15, 15));
+        mainPanel.setBorder(new EmptyBorder(15, 20, 15, 20));
+        add(mainPanel);
 
-        // --- Table ---
+        // Search panel
+        JPanel searchPanel = new JPanel(new BorderLayout(10, 10));
+        searchField = new JTextField();
+        searchPanel.add(new JLabel("🔍 Szukaj:"), BorderLayout.WEST);
+        searchPanel.add(searchField, BorderLayout.CENTER);
+        mainPanel.add(searchPanel, BorderLayout.NORTH);
+
+        // Table
         tableModel = new EmployeeTableModel();
         table = new JTable(tableModel);
-        table.setRowHeight(25);
+        table.setRowHeight(30);
         table.setFillsViewportHeight(true);
+        table.setIntercellSpacing(new Dimension(0, 0));
+        table.setSelectionBackground(new Color(33, 150, 243));
+        table.setSelectionForeground(Color.WHITE);
 
-        TableRowSorter<EmployeeTableModel> sorter = new TableRowSorter<>(tableModel);
-        table.setRowSorter(sorter);
         JScrollPane scrollPane = new JScrollPane(table);
-        add(scrollPane, BorderLayout.CENTER);
+        mainPanel.add(scrollPane, BorderLayout.CENTER);
 
-        // --- Buttons ---
-        JPanel bottomPanel = new JPanel();
-        bottomPanel.setBackground(new Color(173, 216, 230));
-        bottomPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-
-        JButton addButton = createButton("Add");
-        JButton editButton = createButton("Edit Selected");
-        JButton deleteButton = createButton("Delete Selected");
+        // Buttons
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 5));
+        JButton addButton = new JButton("➕ Dodaj");
+        JButton editButton = new JButton("✏️ Edytuj");
+        JButton deleteButton = new JButton("🗑️ Usuń");
 
         addButton.setEnabled(isAdmin);
         editButton.setEnabled(isAdmin);
         deleteButton.setEnabled(isAdmin);
 
-        bottomPanel.add(addButton);
-        bottomPanel.add(editButton);
-        bottomPanel.add(deleteButton);
-        add(bottomPanel, BorderLayout.SOUTH);
+        buttonPanel.add(addButton);
+        buttonPanel.add(editButton);
+        buttonPanel.add(deleteButton);
+        mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
-        // --- Demo data ---
+        // Demo data
         tableModel.addEmployee(new Employee("Anna", "Kowalska", "anna.kowalska@example.com", "123456789"));
         tableModel.addEmployee(new Employee("Jan", "Kowalski", "jan.kowalski@example.com", "987654321"));
+        tableModel.addEmployee(new Employee("Piotr", "Wiśniewski", "piotr.wisniewski@example.com", "555123456"));
+        tableModel.addEmployee(new Employee("Katarzyna", "Zielińska", "katarzyna.zielinska@example.com", "600789123"));
 
-        // --- Add listeners ---
-        addButton.addActionListener(e -> addEmployee());
-        editButton.addActionListener(e -> editEmployee());
-        deleteButton.addActionListener(e -> deleteEmployee());
-
-        // --- Search ---
+        // Sorting / Searching
+        TableRowSorter<EmployeeTableModel> sorter = new TableRowSorter<>(tableModel);
+        table.setRowSorter(sorter);
         searchField.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
             private void search() {
                 String text = searchField.getText().trim();
                 sorter.setRowFilter(text.isEmpty() ? null : RowFilter.regexFilter("(?i)" + text));
             }
-
             public void insertUpdate(javax.swing.event.DocumentEvent e) { search(); }
             public void removeUpdate(javax.swing.event.DocumentEvent e) { search(); }
             public void changedUpdate(javax.swing.event.DocumentEvent e) { search(); }
         });
+
+        // Button actions (add/edit/delete) – używamy tych samych funkcji jak wcześniej
+        addButton.addActionListener(e -> addEmployee());
+        editButton.addActionListener(e -> editEmployee());
+        deleteButton.addActionListener(e -> deleteEmployee());
     }
 
-    private JButton createButton(String text) {
-        JButton button = new JButton(text);
-        button.setBackground(new Color(30, 144, 255));
-        button.setForeground(Color.WHITE);
-        button.setFocusPainted(false);
-        button.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
-        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        return button;
-    }
+    // Funkcje add/edit/delete – pozostają takie same jak wcześniej
+    // Funkcje obsługi przycisków
 
     private void addEmployee() {
         JTextField firstField = new JTextField();
@@ -169,6 +164,7 @@ public class PhonebookFrame extends JFrame {
         }
     }
 
+    // Pomocnicza funkcja do formularzy
     private JPanel createFormPanel(JTextField first, JTextField last, JTextField email, JTextField phone) {
         JPanel panel = new JPanel(new GridLayout(4, 2, 5, 5));
         panel.add(new JLabel("First Name:"));
@@ -181,4 +177,5 @@ public class PhonebookFrame extends JFrame {
         panel.add(phone);
         return panel;
     }
+
 }
