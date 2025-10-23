@@ -1,0 +1,13 @@
+----------------------------------------------------------------
+Thu Oct 23 09:09:18 CEST 2025:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.17.1.0 - (1913217): instance a816c00e-019a-0fe6-8a91-000006f5a9f8 
+on database directory C:\Users\Kornelio\IdeaProjects\Phonebook\phonebookDB with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@1affbebc 
+Loaded from file:/C:/Users/Kornelio/.gradle/caches/modules-2/files-2.1/org.apache.derby/derby/10.17.1.0/e90e61e8ee731614a9bafd3d81155e09fff5e80c/derby-10.17.1.0.jar
+java.vendor=Oracle Corporation
+java.runtime.version=25+37-LTS-3491
+user.dir=C:\Users\Kornelio\IdeaProjects\Phonebook
+os.name=Windows 11
+os.arch=amd64
+os.version=10.0
+derby.system.home=null
+Database Class Loader started - derby.database.classpath=''

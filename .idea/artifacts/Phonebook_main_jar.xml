@@ -1,0 +1,11 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Phonebook.main:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Phonebook_main_jar</output-path>
+    <root id="archive" name="Phonebook.main.jar">
+      <element id="module-output" name="Phonebook.main" />
+      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.derby/derby/10.17.1.0/e90e61e8ee731614a9bafd3d81155e09fff5e80c/derby-10.17.1.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.formdev/flatlaf/3.1/8f25a1eb4cce2f4c08bbd3ad99fd2a43a8e69fbb/flatlaf-3.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.derby/derbyshared/10.17.1.0/e6eac60d1b80b3781dff97ccef88fa131043f2a5/derbyshared-10.17.1.0.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

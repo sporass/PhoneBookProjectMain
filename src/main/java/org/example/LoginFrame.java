@@ -2,53 +2,94 @@ package org.example;
 
 import javax.swing.*;
 import java.awt.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 public class LoginFrame extends JFrame {
-    private final JTextField userField;
-    private final JPasswordField passField;
-    private final JButton loginButton;
+    private JTextField userField;
+    private JPasswordField passField;
+    private JLabel errorLabel;
 
     public LoginFrame() {
-        setTitle("Login");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(300, 150);
+        setTitle("📒Login");
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setSize(600, 400);
         setLocationRelativeTo(null);
-        setLayout(new GridLayout(3, 2, 5, 5));
-        getContentPane().setBackground(Color.WHITE);
+        setLayout(new GridBagLayout());
 
-        JLabel userLabel = new JLabel("Username:");
-        JLabel passLabel = new JLabel("Password:");
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10,15,10,15);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+
+        JLabel title = new JLabel("Login");
+        title.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        title.setHorizontalAlignment(SwingConstants.CENTER);
+        gbc.gridx=0; gbc.gridy=0; gbc.gridwidth=2;
+        add(title, gbc);
+
+        gbc.gridwidth=1; gbc.gridy++;
+        add(new JLabel("Login:"), gbc);
+
         userField = new JTextField();
-        passField = new JPasswordField();
-        loginButton = new JButton("Login");
+        userField.setPreferredSize(new Dimension(200, userField.getPreferredSize().height));
+        gbc.gridx=1;
+        add(userField, gbc);
 
-        loginButton.setBackground(new Color(30, 144, 255));
-        loginButton.setForeground(Color.WHITE);
-        loginButton.setFocusPainted(false);
-        loginButton.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+        gbc.gridx=0; gbc.gridy++;
+        add(new JLabel("Password:"), gbc);
 
-        add(userLabel);
-        add(userField);
-        add(passLabel);
-        add(passField);
-        add(new JLabel());
-        add(loginButton);
+        passField = new JPasswordFieldWithEye(20);
+        passField.setPreferredSize(new Dimension(200, passField.getPreferredSize().height));
+        gbc.gridx=1;
+        add(passField, gbc);
+
+        JButton loginButton = new JButton("Log in");
+        gbc.gridx=0; gbc.gridy++; gbc.gridwidth=2;
+        add(loginButton, gbc);
+
+        errorLabel = new JLabel("");
+        errorLabel.setForeground(Color.RED);
+        errorLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        gbc.gridy++;
+        add(errorLabel, gbc);
 
         loginButton.addActionListener(e -> login());
     }
 
     private void login() {
-        String login = userField.getText().trim();
+        String username = userField.getText().trim();
         String password = new String(passField.getPassword()).trim();
 
-        boolean isAdmin = login.equalsIgnoreCase("Anna") && password.equals("Kowalska");
-        boolean isJan = login.equalsIgnoreCase("Jan") && password.equals("Kowalski");
+        try (Connection conn = Database.getConnection();
+             PreparedStatement ps = conn.prepareStatement("SELECT * FROM USERS WHERE USERNAME=?")) { // <- TUTAJ
 
-        if (isAdmin || isJan) {
-            dispose();
-            new PhonebookFrame(isAdmin).setVisible(true);
-        } else {
-            JOptionPane.showMessageDialog(this, "Invalid username or password!");
+            ps.setString(1, username);
+            ResultSet rs = ps.executeQuery();
+
+            if(rs.next()) {
+                String storedHash = rs.getString("PASSWORDHASH");
+                String storedSalt = rs.getString("SALT");
+                String role = rs.getString("ROLE");
+
+                if(Database.verifyPassword(password, storedHash, storedSalt)) {
+                    dispose();
+                    boolean isAdmin = role.equals("ADMIN");
+                    new PhonebookFrame(isAdmin, username, role).setVisible(true);
+                } else {
+                    errorLabel.setText("Invalid username or password");
+                }
+            } else {
+                errorLabel.setText("Invalid username or password");
+            }
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            errorLabel.setText("Database connection error");
         }
     }
+
+
+
 }
+

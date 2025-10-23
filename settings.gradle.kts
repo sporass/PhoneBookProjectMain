@@ -1,1 +1,1 @@
-rootProject.name = "ProjectMain"
+rootProject.name = "Phonebook"
